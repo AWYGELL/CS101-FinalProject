@@ -56,19 +56,19 @@ def Home_page():
         if (bt_c == 'Search for Recommendations'):
             return render_template('SearchRecommendation.html')
 
-@app.route("CreateNewPlan")
+@app.route("CreateNewPlan", methods=['POST'])
 # 这里是要录入用户输入的所有信息，包括origin, destination, start date, return date, travel plan
 # 共有5个box，每一个box的datatype都是character，前四个box长度100个character，最后一个box长度能多长就多长
 def CreateNewPlan():
     return render_template("CreateNewPlan.html")
 
-@app.route("SearchRecommendation")
+@app.route("SearchRecommendation", methods=['POST'])
 # 这个页面会出现一个search box，让用户输入一个travel destination
 # 这里用户输入的内容不录入database，但要根据用户输入的destination在下面ViewRecommendation的界面显示database中和这个destination有关的所有plan
 def SearchRecommendation():
     return render_template("SearchRecommendation.html")
 
-@app.route("ViewRecommendation")
+@app.route("ViewRecommendation", methods=['POST'])
 # 这里不包含信息录入
 # 这个界面是根据用户在上一个SearchRecommendation界面中输入的destination，显示database中和这个destination有关的所有plan
 def ViewRecommendation():
