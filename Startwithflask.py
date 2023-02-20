@@ -2,10 +2,10 @@ from flask import Flask, render_template
 import pymysql
 from flask import request
 
-app = Flask(__name__, template_folder='Template')
+app = Flask(__name__, template_folder='html')
 
 @app.route("/first/step")
-def index():
+def login():
     return render_template("login.html")
 
 @app.route("/register/step", methods=['GET', 'POST'])
@@ -39,40 +39,62 @@ def post_register():
     print(request.form)
     return render_template('Back_page.html')
 
-@app.route('/Home/Page', methods=["POST","GET"])
-def Home_page():
-    message = ''
-    if request.method == 'GET':
-        return render_template('home.html', message='Please choose a button')
+# @app.route('/Home/Page', methods=["POST","GET"])
+# def Home_page():
+#     message = ''
+#     if request.method == 'GET':
+#         return render_template('home.html', message='Please choose a button')
+#
+#     if request.method == 'POST':
+#         bt_a = request.values.get("button1")
+#         bt_b = request.values.get("button2")
+#         bt_c = request.values.get("button3")
+#         if (bt_a == 'Create a New Plan'):
+#             return render_template('CreateNewPlan.html')
+#         if (bt_b == 'View Plans'):
+#             return render_template('ViewPlans.html')
+#         if (bt_c == 'Search for Recommendations'):
+#             return render_template('SearchRecommendation.html')
 
-    if request.method == 'POST':
-        bt_a = request.values.get("button1")
-        bt_b = request.values.get("button2")
-        bt_c = request.values.get("button3")
-        if (bt_a == 'Create a New Plan'):
-            return render_template('CreateNewPlan.html')
-        if (bt_b == 'View Plans'):
-            return render_template('ViewPlans.html')
-        if (bt_c == 'Search for Recommendations'):
-            return render_template('SearchRecommendation.html')
-
-@app.route("CreateNewPlan", methods=['POST'])
+@app.route('/Plan/Page', methods=['GET','POST'])
 # 这里是要录入用户输入的所有信息，包括origin, destination, start date, return date, travel plan
 # 共有5个box，每一个box的datatype都是character，前四个box长度100个character，最后一个box长度能多长就多长
 def CreateNewPlan():
-    return render_template("CreateNewPlan.html")
+    if request.method == 'GET':
+        return render_template("CreatNewPlan.html")
 
-@app.route("SearchRecommendation", methods=['POST'])
-# 这个页面会出现一个search box，让用户输入一个travel destination
-# 这里用户输入的内容不录入database，但要根据用户输入的destination在下面ViewRecommendation的界面显示database中和这个destination有关的所有plan
-def SearchRecommendation():
-    return render_template("SearchRecommendation.html")
+        origin = request.form.get("origin")
+        destination = request.form.get("destination")
+        startdate = request.form.get("startdate")
+        returndate = request.form.get("returndate")
 
-@app.route("ViewRecommendation", methods=['POST'])
-# 这里不包含信息录入
-# 这个界面是根据用户在上一个SearchRecommendation界面中输入的destination，显示database中和这个destination有关的所有plan
-def ViewRecommendation():
-    return render_template("ViewRecommendation.html")
+        # connect to MYSQL
+        conn = pymysql.connect(host="127.0.0.1", port=3306, user="root", passwd="AWNYGELL030910", charset="utf8",
+                               db="db2")
+        cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
+
+        # send command
+        sql = 'insert into register(origin,destination,startdate,returndate) values(%s,%s,%s,%s,%s)'
+        cursor.execute(sql, [origin,destination,startdate,returndate])
+        conn.commit()
+
+        # close mysql
+        cursor.close()
+        conn.close()
+
+        return "Successfully planned!!!"
+
+# @app.route("SearchRecommendation", methods=['POST'])
+# # 这个页面会出现一个search box，让用户输入一个travel destination
+# # 这里用户输入的内容不录入database，但要根据用户输入的destination在下面ViewRecommendation的界面显示database中和这个destination有关的所有plan
+# def SearchRecommendation():
+#     return render_template("SearchRecommendation.html")
+#
+# @app.route("ViewRecommendation", methods=['POST'])
+# # 这里不包含信息录入
+# # 这个界面是根据用户在上一个SearchRecommendation界面中输入的destination，显示database中和这个destination有关的所有plan
+# def ViewRecommendation():
+#     return render_template("ViewRecommendation.html")
 
 if __name__ == '__main__':
     app.run()
