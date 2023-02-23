@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   <head>
     <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   </head>
   <body>
-    <h1>Hello, {{ username }}</h1>
-    <a href="{{ url_for('home') }}">Logout</a>
+    <h1 class="center">Hello, {{ username }}, Welcome to Travel Planner</h1>
+    <a href="{{ url_for('home') }}" class="logout">Logout</a>
   </body>
 </html>
