@@ -36,12 +36,18 @@ def home():
             # Add new user to database
             username = request.form['username']
             password = request.form['password']
-            c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
-            conn.commit()
-            session['username'] = username
-            return redirect(url_for('dashboard'))
+            c.execute("SELECT * FROM users WHERE username = ?", (username,))
+            user = c.fetchone()
+            if user:
+                return render_template('home.html', message='Username already exists')
+            else:
+                c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+                conn.commit()
+                session['username'] = username
+                return redirect(url_for('dashboard'))
 
     return render_template('home.html')
+
 
 # Dashboard page
 @app.route('/dashboard')
